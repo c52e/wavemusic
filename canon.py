@@ -1,8 +1,7 @@
 import wave
 import numpy as np
 
-def tuneToLogFrequency(source):
-    tune_map = {'1':0, 'a':1, '2':2, 'b':3, '3':4, '4':5, 'd':6, '5':7, 'e':8, '6':9, 'f':10, '7':11}
+def tuneToLogFrequency(source, tune_map):
     log_frequencys = []
     oct = 0
     for tune in source:
@@ -142,7 +141,10 @@ BASE_AMPLITUDE = 5000
 STRIDE_TIME = 0.25
 FRAMERATE = 44100
 
-x1, x21, x22, x3 = [tuneToLogFrequency(tune_seq) for tune_seq in canon_1_2_2_3]
+if 1: tune_map = {'1':0, '2':2, '3':4, '4':5, '5':7, '6':9, '7':11}
+else: tune_map = {'1':0, '2':2, '3':3, '4':5, '5':7, '6':8, '7':10}
+
+x1, x21, x22, x3 = [tuneToLogFrequency(tune_seq, tune_map) for tune_seq in canon_1_2_2_3]
 
 def addBlank(seq):
     res = [None] * (len(seq) * 2)
