@@ -25,6 +25,7 @@ def tuneToLogFrequency(source, tune_map):
     return log_frequencys
 
 canon_1_2_2_3 = [
+# https://www.everyonepiano.com/Number-31-1-Canon-Pachelbels-Canon-Numbered-Musical-Notation-Preview-1.html
 '''
  0 0 0 0 0 0 0 0   0 0 0 0 0 0 0 0   0 0 0 0 0 0 0 0   0 0 0 0 0 0 0 0
 +3 0 0 0+2 0 0 0  +1 0 0 0 7 0 0 0   6 0 0 0 5 0 0 0   6 0 0 0 7 0 0 0
