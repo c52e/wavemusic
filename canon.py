@@ -122,6 +122,20 @@ def waveFuncSinWithMask(time_seq, frequency, stride_time):
     wav = np.sin(2 * np.pi * frequency * time_seq) * mask
     return wav
 
+def waveFuncElectricGuitar(time_seq, frequency, stride_time):
+    mask = np.linspace(0, 1, time_seq.shape[0])
+    mask = mask ** 0.5 # scale to left
+    mask = 1 - ((mask - 0.5) ** 2) * 4
+    wav = np.zeros_like(time_seq)
+    # https://www.researchgate.net/figure/The-spectrum-of-an-ideal-electric-guitar-model-plucked-at-one-third-of-the-string-length_fig4_321787169
+    weights = [1, 0.81, 0, 0.25, 0, 0, 0.24, 0.21, 0, 0, 0.1, 0, 0.13, 0.09, 0, 0.08, 0.1]
+    frequency0 = frequency
+    for weight in weights:
+        wav += np.sin(2 * np.pi * frequency * time_seq) * weight * 0.5
+        frequency += frequency0
+    wav *= mask
+    return wav
+
 def logFrequencysToWave(log_frequencys, durations, base_frequency, base_amplitude, stride_time, framerate, wave_func):
     assert(len(log_frequencys) == len(durations))
 
@@ -137,7 +151,7 @@ def logFrequencysToWave(log_frequencys, durations, base_frequency, base_amplitud
             wav[start:start + tune_length] += wave_func(time_seq, frequency, stride_time) * base_amplitude
     return wav
 
-BASE_FREQUENCY = 261.626 * 2
+BASE_FREQUENCY = 261.626
 BASE_AMPLITUDE = 5000
 STRIDE_TIME = 0.25
 FRAMERATE = 44100
@@ -160,17 +174,17 @@ def join(seq1, seq2):
     return res
 
 log_frequencys_1_2_3 = [addBlank(x1), join(x21, x22), addBlank(x3)]
-durations = [STRIDE_TIME * 1.5] * len(log_frequencys_1_2_3[0])
+durations = [STRIDE_TIME * 3] * len(log_frequencys_1_2_3[0])
 
 wavs = [logFrequencysToWave(log_frequencys, durations, BASE_FREQUENCY, BASE_AMPLITUDE, STRIDE_TIME, FRAMERATE
-        , waveFuncSinWithMask) for log_frequencys in log_frequencys_1_2_3]
+        , waveFuncElectricGuitar) for log_frequencys in log_frequencys_1_2_3]
 wav = sum(wavs[1:], wavs[0])
 
 assert(np.max(wav) < 32768)
 assert(np.min(wav) >= -32768)
 wav_short = wav.astype('<i2') # short
 
-with wave.open("canon.wav", 'wb') as wf:
+with wave.open("canon_electric_guitar.wav", 'wb') as wf:
     wf.setnchannels(1)
     wf.setframerate(FRAMERATE)
     wf.setsampwidth(2) # short
