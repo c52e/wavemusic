@@ -1,28 +1,7 @@
 import wave
 import numpy as np
-
-def tuneToLogFrequency(source, tune_map):
-    log_frequencys = []
-    oct = 0
-    for tune in source:
-        if tune in ' \t\r\n':
-            continue
-        elif tune == '^':
-            oct = 36
-        elif tune == '*':
-            oct = 24
-        elif tune == '+':
-            oct = 12
-        elif tune == '-':
-            oct = -12
-        elif tune == '_':
-            oct = -24
-        elif tune == '.':
-            oct = -36
-        else:
-            log_frequencys.append(oct + tune_map[tune] if tune != '0' else None)
-            oct = 0
-    return log_frequencys
+from base import *
+from waves import *
 
 canon_1_2_2_3 = [
 # https://www.everyonepiano.com/Number-31-1-Canon-Pachelbels-Canon-Numbered-Musical-Notation-Preview-1.html
@@ -115,42 +94,6 @@ canon_1_2_2_3 = [
 '''
 ]
 
-def waveFuncSinWithMask(time_seq, frequency, stride_time):
-    mask = np.linspace(0, 1, time_seq.shape[0])
-    mask = mask ** 0.5 # scale to left
-    mask = 1 - ((mask - 0.5) ** 2) * 4
-    wav = np.sin(2 * np.pi * frequency * time_seq) * mask
-    return wav
-
-def waveFuncElectricGuitar(time_seq, frequency, stride_time):
-    mask = np.linspace(0, 1, time_seq.shape[0])
-    mask = mask ** 0.5 # scale to left
-    mask = 1 - ((mask - 0.5) ** 2) * 4
-    wav = np.zeros_like(time_seq)
-    # https://www.researchgate.net/figure/The-spectrum-of-an-ideal-electric-guitar-model-plucked-at-one-third-of-the-string-length_fig4_321787169
-    weights = [1, 0.81, 0, 0.25, 0, 0, 0.24, 0.21, 0, 0, 0.1, 0, 0.13, 0.09, 0, 0.08, 0.1]
-    frequency0 = frequency
-    for weight in weights:
-        wav += np.sin(2 * np.pi * frequency * time_seq) * weight * 0.5
-        frequency += frequency0
-    wav *= mask
-    return wav
-
-def logFrequencysToWave(log_frequencys, durations, base_frequency, base_amplitude, stride_time, framerate, wave_func):
-    assert(len(log_frequencys) == len(durations))
-
-    stride_length = int(framerate * stride_time)
-    total_length = stride_length * (len(log_frequencys) - 1) + int(framerate * durations[-1])
-    wav = np.zeros(total_length, dtype=np.float64)
-    for i, log_frequency in enumerate(log_frequencys):
-        if log_frequency is not None:
-            start = i * stride_length
-            frequency = base_frequency * (2 ** (log_frequency / 12))
-            tune_length = int(durations[i] * framerate)
-            time_seq = np.linspace(0, durations[i], tune_length)
-            wav[start:start + tune_length] += wave_func(time_seq, frequency, stride_time) * base_amplitude
-    return wav
-
 BASE_FREQUENCY = 261.626
 BASE_AMPLITUDE = 5000
 STRIDE_TIME = 0.25
@@ -177,7 +120,7 @@ log_frequencys_1_2_3 = [addBlank(x1), join(x21, x22), addBlank(x3)]
 durations = [STRIDE_TIME * 3] * len(log_frequencys_1_2_3[0])
 
 wavs = [logFrequencysToWave(log_frequencys, durations, BASE_FREQUENCY, BASE_AMPLITUDE, STRIDE_TIME, FRAMERATE
-        , waveFuncElectricGuitar) for log_frequencys in log_frequencys_1_2_3]
+        , waveElectricGuitar) for log_frequencys in log_frequencys_1_2_3]
 wav = sum(wavs[1:], wavs[0])
 
 assert(np.max(wav) < 32768)
