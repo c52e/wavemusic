@@ -6,8 +6,8 @@ def quadraticMask(length, left_scale = 1):
     mask = 1 - ((mask - 0.5) ** 2) * 4
     return mask
 
-def exponentialMask(length, split = 0.1):
-    length1 = int(length * split)
+def exponentialMask(length, peak = 0.1):
+    length1 = int(length * peak)
     length2 = length - length1
     mask1 = np.linspace(0, 1, length1)
     mask1 = 1 - ((mask1 - 1) ** 2)
@@ -22,7 +22,7 @@ def waveSinWithMask(time_seq, frequency, stride_time):
     return wav
 
 def waveElectricGuitar(time_seq, frequency, stride_time):
-    mask = exponentialMask(time_seq.shape[0], 0.05)
+    mask = exponentialMask(time_seq.shape[0], stride_time * 0.25 / time_seq[-1])
     wav = np.zeros_like(time_seq)
     # https://www.researchgate.net/figure/The-spectrum-of-an-ideal-electric-guitar-model-plucked-at-one-third-of-the-string-length_fig4_321787169
     weights = [1, 0.81, 0, 0.25, 0, 0, 0.24, 0.21, 0, 0, 0.1, 0, 0.13, 0.09, 0, 0.08, 0.1]
