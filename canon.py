@@ -117,7 +117,7 @@ def join(seq1, seq2):
     return res
 
 log_frequencys_1_2_3 = [addBlank(x1), join(x21, x22), addBlank(x3)]
-durations = [STRIDE_TIME * 3] * len(log_frequencys_1_2_3[0])
+durations = [STRIDE_TIME * 5] * len(log_frequencys_1_2_3[0])
 
 wavs = [logFrequencysToWave(log_frequencys, durations, BASE_FREQUENCY, BASE_AMPLITUDE, STRIDE_TIME, FRAMERATE
         , waveElectricGuitar) for log_frequencys in log_frequencys_1_2_3]
