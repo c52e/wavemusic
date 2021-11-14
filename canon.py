@@ -1,5 +1,6 @@
 import wave
 import numpy as np
+import time
 from base import *
 from waves import *
 
@@ -116,19 +117,25 @@ def join(seq1, seq2):
     res[1::2] = seq2
     return res
 
-log_frequencys_1_2_3 = [addBlank(x1), join(x21, x22), addBlank(x3)]
-durations = [STRIDE_TIME * 5] * len(log_frequencys_1_2_3[0])
+if __name__ == '__main__':
+    print('running...')
+    start = time.time()
 
-wavs = [logFrequencysToWave(log_frequencys, durations, BASE_FREQUENCY, BASE_AMPLITUDE, STRIDE_TIME, FRAMERATE
-        , waveElectricGuitar) for log_frequencys in log_frequencys_1_2_3]
-wav = sum(wavs[1:], wavs[0])
+    log_frequencys_1_2_3 = [addBlank(x1), join(x21, x22), addBlank(x3)]
+    durations = [STRIDE_TIME * 5] * len(log_frequencys_1_2_3[0])
 
-assert(np.max(wav) < 32768)
-assert(np.min(wav) >= -32768)
-wav_short = wav.astype('<i2') # short
+    wavs = [logFrequencysToWave(log_frequencys, durations, BASE_FREQUENCY, BASE_AMPLITUDE, STRIDE_TIME, FRAMERATE
+            , waveElectricGuitar) for log_frequencys in log_frequencys_1_2_3]
+    wav = sum(wavs[1:], wavs[0])
 
-with wave.open("canon_electric_guitar.wav", 'wb') as wf:
-    wf.setnchannels(1)
-    wf.setframerate(FRAMERATE)
-    wf.setsampwidth(2) # short
-    wf.writeframes(wav_short.tobytes())
+    assert(np.max(wav) < 32768)
+    assert(np.min(wav) >= -32768)
+    wav_short = wav.astype('<i2') # short
+
+    with wave.open("canon_electric_guitar.wav", 'wb') as wf:
+        wf.setnchannels(1)
+        wf.setframerate(FRAMERATE)
+        wf.setsampwidth(2) # short
+        wf.writeframes(wav_short.tobytes())
+
+    print(f'finished, time consumed: {time.time() - start} seconds')
