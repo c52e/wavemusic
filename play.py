@@ -55,7 +55,7 @@ class MusicAnimation(object):
             while time.time() - start_time < dt * i:
                 pass
         frames = self._wf.getnframes() // self._chunk
-        ani = FuncAnimation(fig, animate, frames=frames, interval=0, repeat=False)
+        ani = FuncAnimation(fig, animate, frames=frames, interval=1, repeat=False)
 
         wf = self._wf
         wf.rewind()
@@ -90,7 +90,8 @@ def merge(audio, video, output):
 def main():
     audio = 'canon_electric_guitar.wav'
     ani = MusicAnimation(audio)
-    #ani.play()
+    ani.play()
+    return
     video = 'video.mp4'
     if not os.path.exists(video):
         ani.save(video)
