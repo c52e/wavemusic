@@ -72,5 +72,17 @@ class MusicAnimation(object):
         stream.close()    
         p.terminate()
 
+    def save(self, filename):
+        fig, ax = self._subplots()
+        fig.set_figheight(9)
+        fig.set_figwidth(16)
+        fig.set_dpi(1920/16)
+
+        frames = self._wf.getnframes() // self._chunk
+        ani = FuncAnimation(fig, lambda i:self._animateBase(i, ax), frames=frames, interval=0, repeat=False)
+        print('saving...')
+        ani.save(filename, fps=self._fps)
+
 ani = MusicAnimation('canon_electric_guitar.wav')
 ani.play()
+#ani.save('test.mp4')
