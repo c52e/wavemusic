@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 import pyaudio
 import time
+import os
 
 plt.style.use("dark_background")
 
@@ -83,6 +84,23 @@ class MusicAnimation(object):
         print('saving...')
         ani.save(filename, fps=self._fps)
 
-ani = MusicAnimation('canon_electric_guitar.wav')
-ani.play()
-#ani.save('test.mp4')
+def merge(audio, video, output):
+    os.system(f'ffmpeg -i {video} -i {audio} -c:v copy -c:a flac -shortest -strict -2 {output}')
+
+def main():
+    audio = 'canon_electric_guitar.wav'
+    ani = MusicAnimation(audio)
+    #ani.play()
+    video = 'video.mp4'
+    if not os.path.exists(video):
+        ani.save(video)
+    else:
+        print(f'"{video}" exists')
+    output = 'va.mp4'
+    if not os.path.exists(output):
+        merge(audio, video, output)
+    else:
+        print(f'"{output}" exists')
+
+if __name__ == '__main__':
+    main()
