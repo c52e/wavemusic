@@ -88,7 +88,7 @@ def merge(audio, video, output):
     os.system(f'ffmpeg -i {video} -i {audio} -c:v copy -c:a flac -shortest -strict -2 {output}')
 
 def main():
-    audio = 'canon_electric_guitar.wav'
+    audio = 'canon_kalimba.wav'
     ani = MusicAnimation(audio)
     ani.play()
     return

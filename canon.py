@@ -122,17 +122,17 @@ if __name__ == '__main__':
     start = time.time()
 
     log_frequencys_1_2_3 = [addBlank(x1), join(x21, x22), addBlank(x3)]
-    durations = [STRIDE_TIME * 5] * len(log_frequencys_1_2_3[0])
+    durations = [STRIDE_TIME * 10] * len(log_frequencys_1_2_3[0])
 
     wavs = [logFrequencysToWave(log_frequencys, durations, BASE_FREQUENCY, BASE_AMPLITUDE, STRIDE_TIME, FRAMERATE
-            , waveElectricGuitar) for log_frequencys in log_frequencys_1_2_3]
+            , waveKalimba) for log_frequencys in log_frequencys_1_2_3]
     wav = sum(wavs[1:], wavs[0])
 
     assert(np.max(wav) < 32768)
     assert(np.min(wav) >= -32768)
     wav_short = wav.astype('<i2') # short
 
-    with wave.open("canon_electric_guitar.wav", 'wb') as wf:
+    with wave.open("canon_kalimba.wav", 'wb') as wf:
         wf.setnchannels(1)
         wf.setframerate(FRAMERATE)
         wf.setsampwidth(2) # short
